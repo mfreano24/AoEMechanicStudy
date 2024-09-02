@@ -58,24 +58,49 @@ namespace Attacks
 
 bool FAoEAttack::SnapshotPlayers(TArray<ACharacter*>& ExistingCharacters, TArray<ACharacter*>& OutHitCharacters)
 {
-	FString AttackShapeName;
-	switch (AttackShape)
+	if (!OwnerPtr.IsValid())
 	{
-	case EAttackShape::Circle:
-		break;
-	case EAttackShape::Cone:
-		break;
-	case EAttackShape::Line:
-		break;
-	case EAttackShape::Donut:
-		break;
-	default:
-		if (StaticEnum<EAttackShape>()->FindNameStringByValue(AttackShapeName, (uint64)AttackShape))
-		{
-			UE_LOG(LogAoE, Warning, TEXT("Unimplemented attack shape requested: [%s]"), *AttackShapeName);
-		}
-		break;
+		return false;
 	}
 
-	return true;
+	FVector Loc = bBossRelativePosition ? OwnerPtr->GetActorLocation() + AttackPosition : AttackPosition;
+	for (ACharacter* Character : ExistingCharacters)
+	{
+		FString AttackShapeName;
+		switch (AttackShape)
+		{
+		case EAttackShape::Circle:
+			if (Attacks::TestCharacter_Circle(Loc, Width, Character))
+			{
+				OutHitCharacters.Add(Character);
+			}
+			break;
+		case EAttackShape::Cone:
+			if (Attacks::TestCharacter_Cone(Loc, Loc + Width * OwnerPtr->GetActorForwardVector(), Width, Character)) //#TODO: get arena size or something for Forward vec
+			{
+				OutHitCharacters.Add(Character);
+			}
+			break;
+		case EAttackShape::Line:
+			if (Attacks::TestCharacter_Line(Loc, Loc + Width * OwnerPtr->GetActorForwardVector(), Width, Character)) //#TODO: get arena size or something for Forward vec
+			{
+				OutHitCharacters.Add(Character);
+			}
+			break;
+		case EAttackShape::Donut:
+			if (!Attacks::TestCharacter_Circle(Loc, Width, Character))
+			{
+				OutHitCharacters.Add(Character);
+			}
+			break;
+		default:
+			if (StaticEnum<EAttackShape>()->FindNameStringByValue(AttackShapeName, (uint64)AttackShape))
+			{
+				UE_LOG(LogAoE, Warning, TEXT("Unimplemented attack shape requested: [%s]"), *AttackShapeName);
+			}
+			break;
+		}
+	}
+
+	return OutHitCharacters.Num() > 0;
 }

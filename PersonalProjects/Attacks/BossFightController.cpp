@@ -3,6 +3,19 @@
 
 #include "BossFightController.h"
 
+ABossFightController::ABossFightController()
+	: Super()
+{
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SetRootComponent(SceneComponent);
+
+	SkelmeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkelmeshComponent"));
+	SkelmeshComponent->SetupAttachment(SceneComponent);
+
+	PrimaryActorTick.bCanEverTick = true;
+	SetActorTickEnabled(true);
+}
+
 void ABossFightController::BeginPlay()
 {
 	Super::BeginPlay();

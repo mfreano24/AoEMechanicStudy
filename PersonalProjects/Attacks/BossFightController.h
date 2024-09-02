@@ -5,11 +5,13 @@
 #include "AttackTimeline.h"
 #include "BossFightController.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class ABossFightController : public AActor
 {
 	GENERATED_BODY()
+
 protected:
+	ABossFightController();
 	// AActor interface
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -22,5 +24,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Boss Fight")
 	FAttackTimeline Timeline;
 
+protected:
+	// Components
+	UPROPERTY()
+	class USceneComponent* SceneComponent;
 
+	UPROPERTY()
+	class USkeletalMeshComponent* SkelmeshComponent;
 };

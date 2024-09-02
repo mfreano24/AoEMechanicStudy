@@ -11,6 +11,11 @@ void FAttackSet::Init(AActor* InOwner)
 	{
 		UE_LOG(LogAoE, Warning, TEXT("No valid owner for attack set!"));
 	}
+
+	for (FAoEAttack& AoEAttack : AttackData)
+	{
+		AoEAttack.OwnerPtr = OwnerPtr;
+	}
 }
 
 void FAttackSet::Start()
@@ -57,7 +62,13 @@ void FAttackSet::SnapshotAttacks()
 	for (FAoEAttack& Attack : AttackData)
 	{
 		TArray<ACharacter*> OutHitChars;
-		Attack.SnapshotPlayers(LiveCharacters, OutHitChars);
+		if (Attack.SnapshotPlayers(LiveCharacters, OutHitChars))
+		{
+			for (ACharacter* HitChar : OutHitChars)
+			{
+				UE_LOG(LogAoE, Log, TEXT("Character [%s] hit by AoE! Took [%f] damage!"), *HitChar->GetName(), Attack.Damage);
+			}
+		}
 	}
 }
 

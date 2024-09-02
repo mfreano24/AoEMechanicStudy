@@ -13,7 +13,7 @@ public:
 	void Init(AActor* InOwner);
 
 	UPROPERTY(EditAnywhere, Category = "Attack Settings")
-	float TelegraphTime = 2.5f;
+	int32 TelegraphTime = 2;
 
 	UPROPERTY(EditAnywhere, Category = "Attack Settings")
 	TArray<FAoEAttack> AttackData;

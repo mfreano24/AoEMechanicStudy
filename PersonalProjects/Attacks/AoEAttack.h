@@ -57,4 +57,6 @@ public:
 	* - Apply a debuff that ensures the player cannot get hit by multiple AoEs.
 	*/
 	bool SnapshotPlayers(TArray<ACharacter*>& ExistingCharacters, TArray<ACharacter*>& OutHitCharacters);
+
+	TWeakObjectPtr<AActor> OwnerPtr;
 };

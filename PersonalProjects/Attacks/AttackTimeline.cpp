@@ -30,4 +30,10 @@ void FAttackTimeline::AdvanceTimeline(float DeltaTime /*= 0.f*/)
 		TimelineEvents[Idx].AttackSet.Start();
 		Idx++;
 	}
+
+	if (Idx >= TimelineEvents.Num())
+	{
+		bIsRunning = false;
+		Reset();
+	}
 }

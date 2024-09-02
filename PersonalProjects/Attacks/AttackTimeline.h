@@ -11,7 +11,7 @@ struct FTimelineEvent
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Attack Settings")
-	float Timestamp = 0.f;
+	int32 Timestamp = 0;
 
 	UPROPERTY(EditAnywhere, Category = "Attack Settings")
 	FAttackSet AttackSet;
@@ -32,4 +32,9 @@ public:
 
 	bool bIsRunning = false;
 	int32 Idx = 0;
+protected:
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category = "Attack Settings", meta=(UIMin=0, UIMax = 600, ClampMin = 0, ClampMax = 600))
+	int32 PreviewTimestamp = 0.f;
+#endif
 };
