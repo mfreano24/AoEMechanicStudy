@@ -3,6 +3,7 @@
 
 #include "AoEAttack.h"
 #include "GameFramework/Character.h"
+#include "PersonalProjects/Globals/HelperLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogAoE);
 
@@ -26,18 +27,23 @@ namespace Attacks
 		*/
 
 		const FVector ConalEnd = (End == FVector::ZeroVector) ? FVector(FLT_INF) : End;
-		FVector RightDir = End - Origin;
+		FVector RightDir = ConalEnd - Origin;
 		RightDir.Y = -RightDir.Y;
-		float Temp = RightDir.X;
+		const float Temp = RightDir.X;
 		RightDir.X = RightDir.Y;
 		RightDir.Y = Temp;
 		RightDir.Normalize();
 
-		const FVector B = End + (0.5f * Width * RightDir);
-		const FVector C = End - (0.5f * Width * RightDir);
+		const FVector B = ConalEnd + (0.5f * Width * RightDir);
+		const FVector C = ConalEnd - (0.5f * Width * RightDir);
 
-		//#TODO: check character is in triangle we just made
-		
+		// Use area method
+		const float TriArea = UHelperLibrary::AreaTriangle(Origin, B, C);
+		const float A1 = UHelperLibrary::AreaTriangle(Character->GetActorLocation(), B, C);
+		const float A2 = UHelperLibrary::AreaTriangle(Origin, Character->GetActorLocation(), C);
+		const float A3 = UHelperLibrary::AreaTriangle(Origin, B, Character->GetActorLocation());
+
+		return FMath::Abs((A1 + A2 + A3) - TriArea) <= 0.05f;
 	}
 
 	bool TestCharacter_Line(const FVector& Start, const FVector& End, const float Width, const ACharacter* Character)
@@ -50,9 +56,9 @@ namespace Attacks
 	}
 };
 
-bool FAoEAttack::SnapshotPlayers(TArray<ACharacter>& OutHitCharacters)
+bool FAoEAttack::SnapshotPlayers(TArray<ACharacter*>& ExistingCharacters, TArray<ACharacter*>& OutHitCharacters)
 {
-
+	FString AttackShapeName;
 	switch (AttackShape)
 	{
 	case EAttackShape::Circle:
@@ -64,6 +70,12 @@ bool FAoEAttack::SnapshotPlayers(TArray<ACharacter>& OutHitCharacters)
 	case EAttackShape::Donut:
 		break;
 	default:
-		
+		if (StaticEnum<EAttackShape>()->FindNameStringByValue(AttackShapeName, (uint64)AttackShape))
+		{
+			UE_LOG(LogAoE, Warning, TEXT("Unimplemented attack shape requested: [%s]"), *AttackShapeName);
+		}
+		break;
 	}
+
+	return true;
 }

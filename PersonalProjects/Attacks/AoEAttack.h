@@ -5,7 +5,7 @@
 
 #include "AoEAttack.generated.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogAoE, Log);
+DECLARE_LOG_CATEGORY_EXTERN(LogAoE, Log, All);
 
 UENUM()
 enum class EAttackShape
@@ -54,8 +54,7 @@ public:
 	* Some behaviors I'd like to try:
 	* - Requiring players to soak the damage (having a fail condition)
 	* - Snapshotting the direction/location of the AoE.
+	* - Apply a debuff that ensures the player cannot get hit by multiple AoEs.
 	*/
-protected:
-
-	bool SnapshotPlayers(TArray<ACharacter>& OutHitCharacters);
+	bool SnapshotPlayers(TArray<ACharacter*>& ExistingCharacters, TArray<ACharacter*>& OutHitCharacters);
 };
